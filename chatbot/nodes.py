@@ -9,12 +9,17 @@ from chatbot.tools import (
     saju_calculator,
     saju_interpreter,
 )  # 전역 인스턴스 가져오기
-from config import OPENAI_API_KEY
+from config import OPENAI_API_KEY, OPENAI_MODEL, OPENAI_TEMPERATURE, OPENAI_MAX_TOKENS
 from datetime import datetime
 import json
 
 # LLM 초기화 (Node 내부에서 호출하기 위함)
-llm = ChatOpenAI(model="gpt-4o", temperature=0.7, api_key=OPENAI_API_KEY)
+llm = ChatOpenAI(
+    model=OPENAI_MODEL,
+    temperature=OPENAI_TEMPERATURE,
+    max_tokens=OPENAI_MAX_TOKENS,
+    api_key=OPENAI_API_KEY
+)
 
 
 def call_llm(state: AgentState):
