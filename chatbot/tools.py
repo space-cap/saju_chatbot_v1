@@ -8,7 +8,7 @@ from core.saju_interpreter import SajuInterpreter
 from database.mysql_manager import MySQLManager
 from database.chroma_manager import ChromaManager
 from langchain_openai import ChatOpenAI
-from config import OPENAI_API_KEY  # OpenAI API 키 로드
+from config import OPENAI_API_KEY, OPENAI_MODEL, OPENAI_TEMPERATURE, OPENAI_MAX_TOKENS  # OpenAI 설정 로드
 
 import json
 from typing import Any
@@ -55,7 +55,12 @@ saju_analyzer = SajuAnalyzer()
 mysql_manager = MySQLManager()
 chroma_manager = ChromaManager()
 # LLM 초기화 (tool 내부에서 직접 접근하기 위함)
-llm_for_tools = ChatOpenAI(model="gpt-4o", temperature=0.7, api_key=OPENAI_API_KEY)
+llm_for_tools = ChatOpenAI(
+    model=OPENAI_MODEL,
+    temperature=OPENAI_TEMPERATURE,
+    max_tokens=OPENAI_MAX_TOKENS,
+    api_key=OPENAI_API_KEY
+)
 saju_interpreter = SajuInterpreter()
 saju_interpreter.set_llm(llm_for_tools)  # Interpreter에 LLM 주입
 
@@ -102,7 +107,9 @@ def calculate_and_analyze_saju(
 
 
 @tool
-def get_saju_interpretation(analyzed_saju_info: dict = None, user_question: str = None) -> str:
+def get_saju_interpretation(
+    analyzed_saju_info: dict = None, user_question: str = None
+) -> str:
     """
     분석된 사주 정보를 바탕으로 사용자에게 친절하고 상세한 사주 풀이를 제공합니다.
     추가적인 사용자 질문이 있다면 그에 대한 답변도 포함합니다.
@@ -113,7 +120,7 @@ def get_saju_interpretation(analyzed_saju_info: dict = None, user_question: str 
         # 사주 정보가 없는 경우 처리
         if not analyzed_saju_info:
             return "사주 해석을 위해서는 먼저 생년월일시 정보가 필요합니다. 태어난 연도, 월, 일, 시간을 알려주세요."
-        
+
         # Interpreter는 이미 LLM을 가지고 있으므로 바로 호출
         interpretation = saju_interpreter.interpret_saju(
             analyzed_saju_info, user_question

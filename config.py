@@ -17,6 +17,11 @@ MYSQL_DB = os.getenv("MYSQL_DB", "saju_chatbot_db")
 # ChromaDB 설정 (로컬 파일 시스템 사용)
 CHROMA_PERSIST_DIRECTORY = "./chroma_db"
 
+# LLM 모델 설정
+OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+OPENAI_TEMPERATURE = float(os.getenv("OPENAI_TEMPERATURE", "0.3"))
+OPENAI_MAX_TOKENS = int(os.getenv("OPENAI_MAX_TOKENS", "2000"))
+
 # Embedding Model 설정 (HuggingFace)
 EMBEDDING_MODEL_NAME = "jhgan/ko-sroberta-multitask"  # 한국어 임베딩 모델로 변경 고려
 EMBEDDING_MODEL_DEVICE = "cpu"
