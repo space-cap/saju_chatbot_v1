@@ -8,3 +8,10 @@ python-dotenv
 fakeredis # 세션 관리 등에 사용될 수 있음
 uvicorn
 fastapi # 또는 streamlit
+
+# Test dependencies
+pytest
+pytest-asyncio
+httpx  # for FastAPI testing
+pytest-mock
+pytest-cov  # for coverage reports

@@ -111,8 +111,8 @@ async def chat_with_saju_bot(request: ChatRequest):
         #         last_state = state["__end__"] # 최종 상태
 
         # 스트림 대신 한 번에 실행 (간단한 API 응답을 위해)
-        final_state =saju_graph_app.invoke(initial_state_data) 
-        last_state =  str, =final_state
+        final_state = saju_graph_app.invoke(initial_state_data)
+        last_state = final_state
 
 
         if last_state and last_state.get("messages"):
