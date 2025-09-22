@@ -1,13 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-사주 챗봇 콘솔 인터페이스
-Korean Fortune Telling (Saju) Console Interface
-
-사용법:
-    python main.py
-
-사용자로부터 생년월일시를 입력받아 사주팔자를 계산하고 해석합니다.
+사주 챗봇 콘솔 인터페이스 (간단 버전)
+Korean Fortune Telling (Saju) Console Interface (Simple Version)
 """
 
 import sys
@@ -18,18 +13,28 @@ from typing import Optional
 # 프로젝트 루트 디렉토리를 Python 경로에 추가
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from core.saju_calculator import SajuCalculator
-from core.saju_analyzer import SajuAnalyzer
-from core.saju_interpreter import SajuInterpreter
+try:
+    from core.saju_calculator import SajuCalculator
+    from core.saju_analyzer import SajuAnalyzer
+    from core.saju_interpreter import SajuInterpreter
+except ImportError as e:
+    print(f"모듈 임포트 오류: {e}")
+    sys.exit(1)
 
 
 class SajuConsole:
     """콘솔 기반 사주 상담 시스템"""
 
     def __init__(self):
-        self.calculator = SajuCalculator()
-        self.analyzer = SajuAnalyzer()
-        self.interpreter = SajuInterpreter()
+        print("사주 시스템을 초기화하고 있습니다...")
+        try:
+            self.calculator = SajuCalculator()
+            self.analyzer = SajuAnalyzer()
+            self.interpreter = SajuInterpreter()
+            print("초기화 완료!")
+        except Exception as e:
+            print(f"초기화 오류: {e}")
+            raise
 
     def print_welcome(self):
         """환영 메시지 출력"""
@@ -83,23 +88,23 @@ class SajuConsole:
                     continue
 
                 # 시간 입력
-                hour_input = input("🕐 태어난 시간 (0-23, 모르면 12 입력): ").strip()
+                hour_input = input("태어난 시간 (0-23, 모르면 12 입력): ").strip()
                 if not hour_input:
                     hour = 12  # 기본값
-                    print("⏰ 시간을 모르시므로 정오(12시)로 설정합니다.")
+                    print("[알림] 시간을 모르시므로 정오(12시)로 설정합니다.")
                 else:
                     hour = int(hour_input)
                     if hour < 0 or hour > 23:
-                        print("❌ 0~23 사이의 시간을 입력해주세요.")
+                        print("[오류] 0~23 사이의 시간을 입력해주세요.")
                         continue
 
                 # 분 입력 (선택사항)
-                minute_input = input("🕐 태어난 분 (0-59, 선택사항, 엔터시 0분): ").strip()
+                minute_input = input("태어난 분 (0-59, 선택사항, 엔터시 0분): ").strip()
                 minute = 0
                 if minute_input:
                     minute = int(minute_input)
                     if minute < 0 or minute > 59:
-                        print("❌ 0~59 사이의 분을 입력해주세요.")
+                        print("[오류] 0~59 사이의 분을 입력해주세요.")
                         continue
 
                 # datetime 객체 생성
@@ -107,48 +112,48 @@ class SajuConsole:
 
                 # 확인
                 print()
-                print("📋 입력하신 정보 확인:")
+                print("[입력하신 정보 확인]")
                 print(f"   생년월일시: {birth_datetime.strftime('%Y년 %m월 %d일 %H시 %M분')}")
 
-                confirm = input("❓ 맞습니까? (y/n): ").strip().lower()
+                confirm = input("맞습니까? (y/n): ").strip().lower()
                 if confirm in ['y', 'yes', 'ㅇ', '네', '맞습니다']:
                     return birth_datetime
                 elif confirm in ['n', 'no', 'ㄴ', '아니요', '다시']:
-                    print("🔄 다시 입력해주세요.\n")
+                    print("[안내] 다시 입력해주세요.\n")
                     continue
                 else:
-                    print("❓ y 또는 n으로 답해주세요.")
+                    print("[안내] y 또는 n으로 답해주세요.")
                     continue
 
             except ValueError as e:
-                print(f"❌ 잘못된 입력입니다. 숫자로 입력해주세요. ({e})")
+                print(f"[오류] 잘못된 입력입니다. 숫자로 입력해주세요. ({e})")
                 continue
             except Exception as e:
-                print(f"❌ 입력 오류: {e}")
+                print(f"[오류] 입력 오류: {e}")
                 continue
 
     def display_saju_info(self, saju_info: dict):
         """사주팔자 정보 표시"""
         print("\n" + "=" * 60)
-        print("🔮 사주팔자 (四柱八字)")
+        print("사주팔자 (四柱八字)")
         print("=" * 60)
 
-        print(f"📜 년주(年柱): {saju_info['year_ganji']} (연간: {saju_info['year_ganji'][0]}, 연지: {saju_info['year_ganji'][1]})")
-        print(f"📜 월주(月柱): {saju_info['month_ganji']} (월간: {saju_info['month_ganji'][0]}, 월지: {saju_info['month_ganji'][1]})")
-        print(f"📜 일주(日柱): {saju_info['day_ganji']} (일간: {saju_info['day_ganji'][0]}, 일지: {saju_info['day_ganji'][1]})")
-        print(f"📜 시주(時柱): {saju_info['time_ganji']} (시간: {saju_info['time_ganji'][0]}, 시지: {saju_info['time_ganji'][1]})")
+        print(f"년주(年柱): {saju_info['year_ganji']} (연간: {saju_info['year_ganji'][0]}, 연지: {saju_info['year_ganji'][1]})")
+        print(f"월주(月柱): {saju_info['month_ganji']} (월간: {saju_info['month_ganji'][0]}, 월지: {saju_info['month_ganji'][1]})")
+        print(f"일주(日柱): {saju_info['day_ganji']} (일간: {saju_info['day_ganji'][0]}, 일지: {saju_info['day_ganji'][1]})")
+        print(f"시주(時柱): {saju_info['time_ganji']} (시간: {saju_info['time_ganji'][0]}, 시지: {saju_info['time_ganji'][1]})")
         print()
-        print("💡 일간(日干)은 당신 자신을 나타내는 핵심 요소입니다.")
-        print(f"💫 당신의 일간: {saju_info['day_ganji'][0]}")
+        print("[중요] 일간(日干)은 당신 자신을 나타내는 핵심 요소입니다.")
+        print(f"당신의 일간: {saju_info['day_ganji'][0]}")
 
     def display_analysis(self, analysis: dict):
         """사주 분석 결과 표시"""
         print("\n" + "=" * 60)
-        print("🧮 사주 분석 결과")
+        print("사주 분석 결과")
         print("=" * 60)
 
         # 오행 분석
-        print("🌍 오행(五行) 분포:")
+        print("오행(五行) 분포:")
         ohang_mapping = {
             "木": "목(木) - 나무",
             "火": "화(火) - 불",
@@ -165,7 +170,7 @@ class SajuConsole:
             print("   (오행 정보를 계산 중입니다...)")
 
         # 십성 분석
-        print("\n🎭 십성(十星) 분포:")
+        print("\n십성(十星) 분포:")
         sipsung_results = analysis.get("sipsung_results", {})
         for position, sipsung in sipsung_results.items():
             if sipsung and sipsung != "알 수 없음":
@@ -175,37 +180,37 @@ class SajuConsole:
         # 신살 분석
         sinsal_results = analysis.get("sinsal_results", [])
         if sinsal_results:
-            print("\n🌟 신살(神殺):")
+            print("\n신살(神殺):")
             for sinsal in sinsal_results:
                 print(f"   {sinsal}")
 
         # 일간 정보
         day_gan = analysis.get("day_gan")
         if day_gan:
-            print(f"\n⭐ 일간: {day_gan}")
+            print(f"\n일간: {day_gan}")
 
     def get_user_question(self) -> str:
         """사용자의 추가 질문 받기"""
         print("\n" + "=" * 60)
-        print("❓ 추가 질문이 있으시면 입력해주세요")
+        print("추가 질문이 있으시면 입력해주세요")
         print("=" * 60)
         print("예시: 올해 운세는?, 직업운은?, 연애운은?, 건강운은? 등")
         print("(질문이 없으시면 엔터를 눌러주세요)")
 
-        question = input("💬 질문: ").strip()
+        question = input("질문: ").strip()
         return question if question else "전반적인 운세를 알려주세요"
 
     def display_interpretation(self, interpretation: str):
         """사주 해석 결과 표시"""
         print("\n" + "=" * 80)
-        print("🔮 사주 해석")
+        print("사주 해석")
         print("=" * 80)
         print(interpretation)
         print("=" * 80)
 
     def ask_continue(self) -> bool:
         """계속할지 묻기"""
-        print("\n❓ 다른 사주를 보시겠습니까? (y/n): ", end="")
+        print("\n다른 사주를 보시겠습니까? (y/n): ", end="")
         response = input().strip().lower()
         return response in ['y', 'yes', 'ㅇ', '네', '계속']
 
@@ -218,10 +223,10 @@ class SajuConsole:
                 # 1. 생년월일시 입력받기
                 birth_datetime = self.get_birth_info()
                 if not birth_datetime:
-                    print("❌ 생년월일시 입력이 취소되었습니다.")
+                    print("[알림] 생년월일시 입력이 취소되었습니다.")
                     break
 
-                print("\n⏳ 사주를 계산하고 있습니다...")
+                print("\n[처리중] 사주를 계산하고 있습니다...")
 
                 # 2. 사주 계산
                 saju_info = self.calculator.calculate_saju(birth_datetime)
@@ -230,7 +235,7 @@ class SajuConsole:
                 self.display_saju_info(saju_info)
 
                 # 4. 사주 분석
-                print("\n⏳ 사주를 분석하고 있습니다...")
+                print("\n[처리중] 사주를 분석하고 있습니다...")
                 analysis = self.analyzer.analyze_saju(saju_info)
 
                 # 5. 분석 결과 표시
@@ -240,7 +245,7 @@ class SajuConsole:
                 user_question = self.get_user_question()
 
                 # 7. 사주 해석 (LLM 없이 기본 해석)
-                print("\n⏳ 사주를 해석하고 있습니다...")
+                print("\n[처리중] 사주를 해석하고 있습니다...")
                 interpretation = self.generate_basic_interpretation(saju_info, analysis, user_question)
 
                 # 8. 해석 결과 표시
@@ -250,18 +255,18 @@ class SajuConsole:
                 if not self.ask_continue():
                     break
 
-                print("\n" + "🔄 " * 20)
+                print("\n" + "=" * 20 + " 새로운 상담 " + "=" * 20)
 
             except KeyboardInterrupt:
-                print("\n\n👋 사주 상담을 종료합니다.")
+                print("\n\n[종료] 사주 상담을 종료합니다.")
                 break
             except Exception as e:
-                print(f"\n❌ 오류가 발생했습니다: {e}")
-                print("🔄 다시 시도해주세요.\n")
+                print(f"\n[오류] 오류가 발생했습니다: {e}")
+                print("[안내] 다시 시도해주세요.\n")
                 continue
 
-        print("\n🙏 사주 상담을 이용해주셔서 감사합니다!")
-        print("🌟 좋은 하루 되세요!")
+        print("\n사주 상담을 이용해주셔서 감사합니다!")
+        print("좋은 하루 되세요!")
 
     def generate_basic_interpretation(self, saju_info: dict, analysis: dict, user_question: str) -> str:
         """LLM 없이 기본적인 사주 해석 생성"""
@@ -283,7 +288,7 @@ class SajuConsole:
         }
 
         if day_gan in gan_personality:
-            interpretation_parts.append(f"🌟 당신의 기본 성향:\n{gan_personality[day_gan]}")
+            interpretation_parts.append(f"[기본 성향]\n{gan_personality[day_gan]}")
 
         # 오행 균형 해석
         ohang_counts = analysis.get("ohang_counts", {})
@@ -300,7 +305,7 @@ class SajuConsole:
             }
 
             if max_ohang in ohang_meanings:
-                interpretation_parts.append(f"🌊 오행 특징:\n{ohang_meanings[max_ohang]}")
+                interpretation_parts.append(f"[오행 특징]\n{ohang_meanings[max_ohang]}")
 
             if min_ohang and ohang_counts[min_ohang] == 0:
                 missing_advice = {
@@ -311,25 +316,25 @@ class SajuConsole:
                     "水": "수(水) 기운을 보완하면 좋습니다. 학습이나 내적 성찰을 통해 지혜를 쌓으세요."
                 }
                 if min_ohang in missing_advice:
-                    interpretation_parts.append(f"💡 개선 방향:\n{missing_advice[min_ohang]}")
+                    interpretation_parts.append(f"[개선 방향]\n{missing_advice[min_ohang]}")
 
         # 신살 해석
         sinsal_results = analysis.get("sinsal_results", [])
         if "도화살" in sinsal_results:
-            interpretation_parts.append("🌸 도화살: 이성에게 인기가 많고 매력적인 기운을 가지고 있습니다. 대인관계에서 장점이 될 수 있습니다.")
+            interpretation_parts.append("[도화살] 이성에게 인기가 많고 매력적인 기운을 가지고 있습니다. 대인관계에서 장점이 될 수 있습니다.")
 
         # 사용자 질문에 대한 기본 답변
         if "직업" in user_question or "일" in user_question or "career" in user_question.lower():
-            interpretation_parts.append("💼 직업운: 당신의 일간과 오행 특성을 고려할 때, 꾸준한 노력과 성실함으로 좋은 성과를 얻을 수 있습니다.")
+            interpretation_parts.append("[직업운] 당신의 일간과 오행 특성을 고려할 때, 꾸준한 노력과 성실함으로 좋은 성과를 얻을 수 있습니다.")
         elif "연애" in user_question or "사랑" in user_question or "결혼" in user_question:
-            interpretation_parts.append("💕 연애운: 진실한 마음으로 상대방을 대하면 좋은 인연을 만날 수 있습니다. 자신의 매력을 자연스럽게 드러내세요.")
+            interpretation_parts.append("[연애운] 진실한 마음으로 상대방을 대하면 좋은 인연을 만날 수 있습니다. 자신의 매력을 자연스럽게 드러내세요.")
         elif "건강" in user_question:
-            interpretation_parts.append("🏥 건강운: 규칙적인 생활과 적절한 운동으로 건강을 유지하세요. 스트레스 관리에 특히 신경 쓰시기 바랍니다.")
+            interpretation_parts.append("[건강운] 규칙적인 생활과 적절한 운동으로 건강을 유지하세요. 스트레스 관리에 특히 신경 쓰시기 바랍니다.")
         elif "재물" in user_question or "돈" in user_question or "투자" in user_question:
-            interpretation_parts.append("💰 재물운: 성실한 노력과 계획적인 관리로 재물을 축적할 수 있습니다. 무리한 투자보다는 안정적인 방법을 선택하세요.")
+            interpretation_parts.append("[재물운] 성실한 노력과 계획적인 관리로 재물을 축적할 수 있습니다. 무리한 투자보다는 안정적인 방법을 선택하세요.")
 
         # 전반적인 조언
-        interpretation_parts.append("🌟 전체적으로 당신은 고유한 장점과 잠재력을 가지고 있습니다. 자신감을 가지고 꾸준히 노력하시면 원하는 목표를 달성할 수 있을 것입니다.")
+        interpretation_parts.append("[종합] 전체적으로 당신은 고유한 장점과 잠재력을 가지고 있습니다. 자신감을 가지고 꾸준히 노력하시면 원하는 목표를 달성할 수 있을 것입니다.")
 
         return "\n\n".join(interpretation_parts)
 
@@ -340,8 +345,8 @@ def main():
         console = SajuConsole()
         console.run()
     except Exception as e:
-        print(f"❌ 프로그램 실행 중 오류가 발생했습니다: {e}")
-        print("🔧 개발자에게 문의해주세요.")
+        print(f"[오류] 프로그램 실행 중 오류가 발생했습니다: {e}")
+        print("[안내] 개발자에게 문의해주세요.")
 
 
 if __name__ == "__main__":
