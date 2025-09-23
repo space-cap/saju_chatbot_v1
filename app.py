@@ -35,6 +35,14 @@ class ChatRequest(BaseModel):
     history: List[dict] = []  # 대화 기록 (optional)
 
 
+@app.get("/health")
+async def health_check():
+    """
+    서버 상태 확인을 위한 헬스체크 엔드포인트
+    """
+    return {"status": "healthy", "message": "사주팔자 챗봇 서버가 정상 작동 중입니다."}
+
+
 @app.post("/chat/")
 async def chat_with_saju_bot(request: ChatRequest):
     """
